@@ -1,0 +1,215 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manage Flight Schedules - Donz Airlines</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('/static/images/flight-bg.jpg') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      color: #444;
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.85);
+      max-width: 700px;
+      margin: 50px auto;
+      border-radius: 15px;
+      padding: 30px 40px;
+      box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #003366;
+      margin-bottom: 25px;
+      font-weight: 700;
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: space-between;
+    }
+
+    .input-group {
+      flex: 1 1 calc(50% - 20px);
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 10px;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #b94e48;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    select, input[type="text"], input[type="date"], input[type="time"], input[type="number"] {
+      padding: 12px 15px;
+      font-size: 14px;
+      border: 1.5px solid #ccc;
+      border-radius: 25px;
+      transition: border-color 0.3s ease;
+      font-weight: 600;
+      color: #004085;
+      outline: none;
+    }
+
+    select:focus, input[type="text"]:focus, input[type="date"]:focus, input[type="time"]:focus, input[type="number"]:focus {
+      border-color: #b94e48;
+      box-shadow: 0 0 5px rgba(185, 78, 72, 0.6);
+    }
+
+    button {
+      flex: 1 1 100%;
+      background-color: #b94e48;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 14px 0;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 15px;
+      box-shadow: 0 5px 10px rgba(185, 78, 72, 0.4);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover, button:focus {
+      background-color: #7c2d27;
+      box-shadow: 0 8px 20px rgba(124, 45, 39, 0.6);
+      outline: none;
+    }
+
+    @media (max-width: 600px) {
+      .input-group {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Donz Airlines</h1>
+    <h2>Add Flight Schedule</h2>
+    <form method="POST" novalidate>
+      {% csrf_token %}
+
+      <div class="input-group">
+        <label for="flight_number">Flight Number</label>
+        <select id="flight_number" name="flight_number" required>
+          <option value="" disabled selected>Select flight number</option>
+          <option value="A4351">A4351</option>
+          <option value="A5644">A5644</option>
+          <option value="A3009">A3009</option>
+          <option value="B2345">B2345</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="origin">Flying From</label>
+        <input id="origin" list="philippine-locations" name="origin" placeholder="Select origin" autocomplete="off" required>
+      </div>
+
+      <div class="input-group">
+        <label for="destination">Flying To</label>
+        <input id="destination" list="philippine-locations" name="destination" placeholder="Select destination" autocomplete="off" required>
+      </div>
+
+      <div class="input-group">
+        <label for="departure_date">Departure Date</label>
+        <input id="departure_date" type="date" name="departure_date" required>
+      </div>
+
+      <div class="input-group">
+        <label for="departure_time">Departure Time</label>
+        <input id="departure_time" type="time" name="departure_time" required>
+      </div>
+
+      <div class="input-group">
+        <label for="available_seats">Available Seats</label>
+        <input id="available_seats" type="number" name="available_seats" min="1" required>
+      </div>
+
+      <div class="input-group">
+        <label for="price">Price (₱)</label>
+        <input id="price" type="number" name="price" step="0.01" min="0" required>
+      </div>
+
+      <button type="submit">Add Flight</button>
+    </form>
+
+    <datalist id="philippine-locations">
+      <option value="Manila (MNL)">
+      <option value="Cebu (CEB)">
+      <option value="Davao (DVO)">
+      <option value="Clark (CRK)">
+      <option value="Iloilo (ILO)">
+      <option value="Bacolod (BCD)">
+      <option value="Tacloban (TAC)">
+      <option value="Cagayan de Oro (CGY)">
+      <option value="Zamboanga (ZAM)">
+      <option value="Puerto Princesa (PPS)">
+      <option value="General Santos (GES)">
+      <option value="Kalibo (KLO)">
+      <option value="Roxas (RXS)">
+      <option value="Legazpi (DRP)">
+      <option value="Tagbilaran (TAG)">
+    </datalist>
+  </div>
+
+
+    {% if flight_schedules %}
+      {% with seats_available_flights=flight_schedules|dictsort:"departure_date"|default_if_none:"" %}
+        {% if seats_available_flights %}
+          <table>
+            <thead>
+              <tr>
+                <th>Flight Number</th>
+                <th>Origin</th>
+                <th>Destination</th>
+                <th>Departure Date</th>
+                <th>Departure Time</th>
+                <th>Available Seats</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for flight in seats_available_flights %}
+                {% if flight.available_seats > 1 %}
+                  <tr>
+                    <td>{{ flight.flight_number|default:"N/A" }}</td>
+                    <td>{{ flight.origin }}</td>
+                    <td>{{ flight.destination }}</td>
+                    <td>{{ flight.departure_date }}</td>
+                    <td>{{ flight.departure_time }}</td>
+                    <td>{{ flight.available_seats }}</td>
+                    <td>₱{{ flight.price|intcomma }}</td>
+                  </tr>
+                {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+          {% if not seats_available_flights|dictsort:"departure_date"|length %}
+           {% endif %}
+        {% else %}
+         {% endif %}
+      {% endwith %}
+    {% else %}
+     {% endif %}
+
+    <a href="{% url 'admin_dashboard' %}" class="back-button" tabindex="0">← Back to Dashboard</a>
+  </div>
+
+</body>
+</html>

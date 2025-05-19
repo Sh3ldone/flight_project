@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book a Flight</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .form-container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #005bb5;
+        }
+        .back-button {
+            position: fixed;
+            right: 90px;
+            top: 600px;
+            padding: 10px 20px;
+            background-color: #0066cc;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .back-button:hover {
+            background-color: #005bb5;
+        }
+        .message {
+            color: green;
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Book a Flight</h1>
+
+{% if messages %}
+<div class="message">
+    {% for message in messages %}
+        {{ message }}
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="form-container">
+    <h3>Flight Information:</h3>
+    <p><strong>Flight Number:</strong> {{ flight_schedule.flight_number }}</p>
+    <p><strong>Origin:</strong> {{ flight_schedule.origin }}</p>
+    <p><strong>Destination:</strong> {{ flight_schedule.destination }}</p>
+    <p><strong>Departure Date:</strong> {{ flight_schedule.departure_date }}</p>
+    <p><strong>Departure Time:</strong> {{ flight_schedule.departure_time }}</p>
+    <p><strong>Available Seats:</strong> {{ flight_schedule.available_seats }}</p>
+
+    <!-- Form that redirects to the payment page with parameters -->
+<form method="get" action="{% url 'payment' flight_schedule.id %}">
+    <label for="full_name">Full Name:</label>
+    <input type="text" name="full_name" id="full_name" required>
+
+    <label for="email">Email:</label>
+    <input type="email" name="email" id="email" required>
+
+    <label for="seats_booked">Seats to Book:</label>
+    <input type="number" name="seats_booked" id="seats_booked" min="1" max="{{ flight_schedule.available_seats }}" required>
+
+    <button type="submit">Proceed to Payment</button>
+</form>
+
+
+</div>
+
+<a href="{% url 'user_dashboard' %}" class="back-button">Back to Home</a>
+
+</body>
+</html>

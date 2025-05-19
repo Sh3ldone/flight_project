@@ -1,0 +1,164 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Edit Flight Schedule - Donz Airlines</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f4f4f4;
+    }
+
+    h1, h2 {
+      color: #333;
+      text-align: center;
+    }
+
+    .section {
+      max-width: 800px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .input-group {
+      flex: 1 1 45%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-label {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 5px;
+    }
+
+    input, select {
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .button {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .button:hover,
+    .button:focus {
+      background: #218838;
+      outline: none;
+    }
+
+    .back-button {
+      display: block;
+      width: fit-content;
+      margin: 30px auto 0;
+      padding: 10px 20px;
+      background-color: #6c757d;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      text-align: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .back-button:hover,
+    .back-button:focus {
+      background-color: #5a6268;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Edit Flight Schedule</h1>
+
+  <div class="section">
+    <form method="POST">
+      {% csrf_token %}
+      
+      <div class="input-group">
+        <label for="flight_number" class="input-label">Flight Number</label>
+        <select id="flight_number" name="flight_number" required>
+          <option value="A4351" {% if schedule.flight_number == "A4351" %}selected{% endif %}>A4351</option>
+          <option value="A5644" {% if schedule.flight_number == "A5644" %}selected{% endif %}>A5644</option>
+          <option value="A3009" {% if schedule.flight_number == "A3009" %}selected{% endif %}>A3009</option>
+          <option value="B2345" {% if schedule.flight_number == "B2345" %}selected{% endif %}>B2345</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="origin" class="input-label">From</label>
+        <input id="origin" list="philippine-locations" name="origin" value="{{ schedule.origin }}" required>
+      </div>
+
+      <div class="input-group">
+        <label for="destination" class="input-label">To</label>
+        <input id="destination" list="philippine-locations" name="destination" value="{{ schedule.destination }}" required>
+      </div>
+
+      <div class="input-group">
+        <label for="departure_date" class="input-label">Departure Date</label>
+        <input id="departure_date" type="date" name="departure_date" value="{{ schedule.departure_date }}" required>
+      </div>
+
+      <div class="input-group">
+        <label for="departure_time" class="input-label">Departure Time</label>
+        <input id="departure_time" type="time" name="departure_time" value="{{ schedule.departure_time|time:'H:i' }}" required>
+      </div>
+
+      <div class="input-group">
+        <label for="available_seats" class="input-label">Available Seats</label>
+        <input id="available_seats" type="number" name="available_seats" value="{{ schedule.available_seats }}" required min="1">
+      </div>
+
+      <div class="input-group">
+        <label for="price" class="input-label">Price (₱)</label>
+        <input id="price" type="number" name="price" step="0.01" value="{{ schedule.price }}" required>
+      </div>
+
+      <button type="submit" class="button">Save Changes</button>
+
+      <datalist id="philippine-locations">
+        <option value="Manila (MNL)">
+        <option value="Cebu (CEB)">
+        <option value="Davao (DVO)">
+        <option value="Clark (CRK)">
+        <option value="Iloilo (ILO)">
+        <option value="Bacolod (BCD)">
+        <option value="Tacloban (TAC)">
+        <option value="Cagayan de Oro (CGY)">
+        <option value="Zamboanga (ZAM)">
+        <option value="Puerto Princesa (PPS)">
+        <option value="General Santos (GES)">
+        <option value="Kalibo (KLO)">
+        <option value="Roxas (RXS)">
+        <option value="Legazpi (DRP)">
+        <option value="Tagbilaran (TAG)">
+      </datalist>
+    </form>
+
+    <a href="{% url 'admin_dashboard' %}" class="back-button">← Back to Dashboard</a>
+  </div>
+
+</body>
+</html>

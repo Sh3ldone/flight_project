@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Flight Reservation Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #007bff;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .footer {
+            font-size: 12px;
+            color: #999;
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Flight Reservation Confirmation</h2>
+        <p>Dear {{ full_name }},</p>
+        <p>Your reservation for flight <strong>{{ flight_number }}</strong> from <strong>{{ origin }}</strong> to <strong>{{ destination }}</strong> on <strong>{{ departure_date }}</strong> at <strong>{{ departure_time }}</strong> for <strong>{{ seats_booked }}</strong> seat(s) has been successfully confirmed.</p>
+        <p>Thank you for choosing our airline.</p>
+
+        <div class="footer">
+            &copy; {{ current_year }} Your Airline Company. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

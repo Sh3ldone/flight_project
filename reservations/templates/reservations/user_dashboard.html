@@ -1,0 +1,187 @@
+{% load static %}
+{% load tz %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Dashboard - Donz Airlines</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: #0f2a59;
+    }
+
+    .navbar {
+      background: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 60px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #002f6c;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .nav-links a.active {
+      color: #002f6c;
+      font-weight: bold;
+      border-bottom: 2px solid #002f6c;
+    }
+
+    .logout-btn {
+      background-color: #1a4aff;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+      padding: 60px;
+      flex-wrap: wrap;
+      border-radius: 0 0 20px 20px;
+    }
+
+    .hero-text {
+      max-width: 50%;
+    }
+
+    .hero-text h1 {
+      font-size: 2.5rem;
+      color: #1c1c1c;
+      margin-bottom: 20px;
+    }
+
+    .hero-text .highlight {
+      color: #1a4aff;
+    }
+
+    .hero-text p {
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 20px;
+    }
+
+    .meta {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 15px;
+    }
+
+    .btn-group {
+      margin-top: 20px;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background-color: #1a4aff;
+      color: white;
+      padding: 12px 25px;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #003ad3;
+    }
+
+    .hero-image img {
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 14px;
+      color: #ccc;
+      margin: 40px 0 20px;
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        flex-direction: column;
+        padding: 40px 20px;
+      }
+
+      .hero-text {
+        max-width: 100%;
+        text-align: center;
+      }
+
+      .btn-group {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="logo">✈️ Donz Airlines</div>
+    <nav>
+      <ul class="nav-links">
+      </ul>
+    </nav>
+    <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+  </header>
+
+  <main class="hero">
+    <div class="hero-text">
+      <h1>Welcome, <span class="highlight">{{ user.username }}</span>!</h1>
+      <div class="meta">
+        {% timezone "Asia/Manila" %}
+          Last login: {{ user.last_login|date:"M d, Y H:i" }}<br>
+        {% endtimezone %}
+        Member since: {{ user.date_joined|date:"M d, Y" }}
+      </div>
+      <p>This is your personalized dashboard. Access your reservations, explore flights, and book your next trip!</p>
+      <div class="btn-group">
+        <a href="{% url 'view_flight_schedule' %}" class="btn">View Flights</a>
+        <a href="{% url 'list_reservations' %}" class="btn">My Reservations</a>
+        <a href="{% url 'booking_flight' %}" class="btn">Book Flight</a>
+      </div>
+    </div>
+    <div class="hero-image">
+      <img src="{% static 'images/planee.png' %}" alt="Airplane" />
+    </div>
+  </main>
+
+  <div class="footer">
+    &copy; 2025 Donz Airlines. All rights reserved.
+  </div>
+
+</body>
+</html>

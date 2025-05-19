@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Available Flights - Donz Airlines</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .no-flights {
+            text-align: center;
+            margin-top: 40px;
+            color: #555;
+        }
+        .back-button {
+            display: block;
+            width: 120px;
+            margin: 30px auto;
+            padding: 10px 0;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Available Flight Schedules</h1>
+
+    {% if flight_schedules %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Flight Number</th>
+                    <th>Origin</th>
+                    <th>Destination</th>
+                    <th>Departure Date</th>
+                    <th>Departure Time</th>
+                    <th>Available Seats</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for flight in flight_schedules %}
+                <tr>
+                    <td>{{ flight.flight_number }}</td>
+                    <td>{{ flight.origin }}</td>
+                    <td>{{ flight.destination }}</td>
+                    <td>{{ flight.departure_date }}</td>
+                    <td>{{ flight.departure_time }}</td>
+                    <td>{{ flight.available_seats }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align:center;">No flights available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="no-flights">No flights available at the moment.</p>
+    {% endif %}
+
+    <a href="{% url 'user_dashboard' %}" class="back-button">Back to Dashboard</a>
+
+</body>
+</html>
