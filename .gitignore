@@ -1,0 +1,24 @@
+# Python bytecode
+__pycache__/
+*.pyc
+
+# SQLite database
+db.sqlite3
+
+# Environment variables
+.env
+
+# Django stuff
+*.log
+*.pot
+*.py[cod]
+
+# macOS files
+.DS_Store
+
+# VSCode settings folder
+.vscode/
+
+# Virtual environment folders
+venv/
+env/
