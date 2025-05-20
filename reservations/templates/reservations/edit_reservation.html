@@ -1,7 +1,14 @@
 <h1>Edit Reservation</h1>
 
-<form method="post">
+<form method="post" style="max-width: 600px; margin: auto;">
   {% csrf_token %}
   {{ form.as_p }}
-  <button type="submit">Update Reservation</button>
+  
+  <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+ 
+    <button type="submit" 
+            style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">
+      Update Reservation
+    </button>
+  </div>
 </form>

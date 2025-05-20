@@ -45,13 +45,15 @@ def edit_flight_schedule(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Flight schedule updated successfully!')
-            return redirect('admin_dashboard')  # Ensure the redirect is happening here
+            form = FlightScheduleForm(instance=schedule)  # Reinitialize to reflect saved values
+            # DO NOT REDIRECT – stay on page
         else:
             messages.error(request, 'There was an error updating the flight schedule.')
     else:
         form = FlightScheduleForm(instance=schedule)
     
-    return render(request, 'reservations/edit_flight_schedule.html', {'form': form})
+    return render(request, 'reservations/edit_flight_schedule.html', {'form': form, 'schedule': schedule})
+
 
 def edit_schedule(request, id):  # <-- Accept the id parameter
     schedule = get_object_or_404(FlightSchedule, pk=id)
@@ -198,7 +200,12 @@ def edit_reservation(request, reservation_id):
         if form.is_valid():
             form.save()
             messages.success(request, "Reservation updated successfully.")
-            return redirect('list_reservations')
+            
+            # Redirect based on user type
+            if request.user.is_staff:
+                return redirect('admin_dashboard')
+            else:
+                return redirect('user_dashboard')  # or 'list_reservations' if that is the user page
     else:
         form = form_class(instance=reservation)
 
