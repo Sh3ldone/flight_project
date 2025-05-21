@@ -16,7 +16,9 @@ from .forms import SupportForm
 from django.core.mail import send_mail, EmailMultiAlternatives # Make sure this import is at the top
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-
+from django.utils.timezone import now
+from django.http import Http404
+ 
  
 
  
@@ -24,35 +26,46 @@ from django.utils.html import strip_tags
 
  
 # Admin Dashboard View
-@login_required
-@staff_member_required  # Ensures only admins/staff can access this view
-def admin_dashboard(request):
-    reservations = FlightReservation.objects.all()        # Get all reservations
-    flight_schedules = FlightSchedule.objects.all()       # Get all flight schedules
 
-    return render(request, 'reservations/admin_dashboard.html', {
+@login_required
+@staff_member_required
+def admin_dashboard(request):
+    reservations = FlightReservation.objects.filter(status='active')
+    past_reservations = FlightReservation.objects.exclude(status='active')
+
+    context = {
+        'flight_schedules': FlightSchedule.objects.all(),
         'reservations': reservations,
-        'flight_schedules': flight_schedules,
-    })
+        'past_reservations': past_reservations,
+    }
+    return render(request, 'reservations/admin_dashboard.html', context)
+
+
 
 @login_required
 @staff_member_required
 def edit_flight_schedule(request, pk):
     schedule = get_object_or_404(FlightSchedule, pk=pk)
-    
+    flight_numbers = ["A4351", "A5644", "A3009", "B2345"]  # Pass this list to template
+
     if request.method == 'POST':
         form = FlightScheduleForm(request.POST, instance=schedule)
         if form.is_valid():
             form.save()
             messages.success(request, 'Flight schedule updated successfully!')
-            form = FlightScheduleForm(instance=schedule)  # Reinitialize to reflect saved values
-            # DO NOT REDIRECT – stay on page
+            return redirect('edit_flight_schedule', pk=pk)  # PRG pattern
         else:
-            messages.error(request, 'There was an error updating the flight schedule.')
+            messages.error(request, 'Error updating flight schedule: ' + str(form.errors))
     else:
         form = FlightScheduleForm(instance=schedule)
-    
-    return render(request, 'reservations/edit_flight_schedule.html', {'form': form, 'schedule': schedule})
+
+    context = {
+        'form': form,
+        'schedule': schedule,
+        'flight_numbers': flight_numbers,
+    }
+    return render(request, 'reservations/edit_flight_schedule.html', context)
+
 
 
 def edit_schedule(request, id):  # <-- Accept the id parameter
@@ -177,8 +190,10 @@ def list_reservations(request):
     if request.user.is_staff:
         reservations = FlightReservation.objects.select_related('flight_schedule').all()
     else:
-        reservations = FlightReservation.objects.select_related('flight_schedule').filter(user=request.user)
+        # Show only active reservations for users
+        reservations = FlightReservation.objects.select_related('flight_schedule').filter(user=request.user, status='active')
     return render(request, 'reservations/list_reservations.html', {'reservations': reservations})
+
 
 # Edit a Reservation
 @login_required
@@ -215,25 +230,30 @@ def edit_reservation(request, reservation_id):
     })
 # Cancel a Reservation
 
+
 @login_required
 @transaction.atomic
-def cancel_reservation(request, id):
-    reservation = get_object_or_404(FlightReservation.objects.select_for_update(), id=id)
-    flight_schedule = reservation.flight_schedule
+def cancel_reservation(request, reservation_id):
+    try:
+        if request.user.is_staff:
+            reservation = FlightReservation.objects.get(id=reservation_id)
+        else:
+            reservation = FlightReservation.objects.get(id=reservation_id, user=request.user)
+    except FlightReservation.DoesNotExist:
+        raise Http404("No FlightReservation matches the given query.")
 
-    # Permission check
-    if not (request.user.is_staff or reservation.user == request.user):
-        messages.error(request, "You don't have permission to cancel this reservation.")
-        return redirect('user_dashboard' if not request.user.is_staff else 'admin_dashboard')
+    if reservation.status != 'canceled':
+        flight = reservation.flight_schedule
+        flight.available_seats += reservation.seats_booked
+        flight.save()
 
-    # Increase the available seats by the seats_booked in the reservation
-    flight_schedule.available_seats += reservation.seats_booked
-    flight_schedule.save()
-
-    reservation.delete()
-    messages.success(request, "Reservation successfully canceled and seats returned.")
-
+        reservation.status = 'canceled'
+        reservation.save()
+    
+    messages.success(request, "Reservation canceled and seats freed.")
     return redirect('user_dashboard' if not request.user.is_staff else 'admin_dashboard')
+
+
 # Admin Add Flight Schedule
 @login_required
 @staff_member_required

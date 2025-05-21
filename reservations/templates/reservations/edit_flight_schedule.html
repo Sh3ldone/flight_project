@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Edit Flight Schedule</title>
     <style>
-        /* Add some basic styles for the form */
+        /* Basic form styles */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             background-color: #f4f4f4;
         }
-
         .container {
             max-width: 600px;
             margin: 50px auto;
@@ -20,36 +19,65 @@
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-
         .form-group {
             margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
         }
-
-        input[type="text"], input[type="number"], input[type="datetime-local"], button {
-            width: 100%;
+        select, input[type="text"], input[type="number"], input[type="date"], input[type="time"] {
             padding: 10px;
-            margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 4px;
+            font-size: 15px;
+            font-family: inherit;
         }
-
+        select:focus, input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus, input[type="time"]:focus {
+            border-color: #b94e48;
+            outline: none;
+            box-shadow: 0 0 5px rgba(185, 78, 72, 0.6);
+        }
+        button, a.button-link {
+            width: 48%;
+            padding: 10px;
+            margin-top: 15px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            box-sizing: border-box;
+        }
         button {
             background-color: #28a745;
+            border: none;
             color: white;
-            font-size: 16px;
-            cursor: pointer;
         }
-
         button:hover {
             background-color: #218838;
         }
-
+        a.button-link {
+            background-color: #6c757d;
+            color: white;
+            border: 1px solid #6c757d;
+        }
+        a.button-link:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 4%;
+        }
         .errorlist {
             color: red;
             list-style-type: none;
             padding: 0;
+            margin: 5px 0 0 0;
+            font-size: 14px;
         }
-
         .errorlist li {
             margin-bottom: 5px;
         }
@@ -57,76 +85,85 @@
 </head>
 <body>
 
-    <div class="container">
-        <h1>Edit Flight Schedule</h1>
+<div class="container">
+    <h1>Edit Flight Schedule</h1>
 
-        <!-- Form to edit the flight schedule -->
-        <form method="post">
-            {% csrf_token %}
-            
-            <!-- Render form fields using Django form -->
-            <div class="form-group">
-                <label for="flight_number">Flight Number</label>
-                {{ form.flight_number }}
-                {% if form.flight_number.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.flight_number.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="flight_number">Flight Number</label>
+            <select id="flight_number" name="flight_number" required>
+                <option value="" disabled
+                    {% if not form.flight_number.value and not schedule.flight_number %}
+                        selected
+                    {% endif %}
+                >Select flight number</option>
 
-            <div class="form-group">
-                <label for="origin">Origin</label>
-                {{ form.origin }}
-                {% if form.origin.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.origin.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
+                {% for fn in flight_numbers %}
+                    <option value="{{ fn }}"
+                        {% if form.flight_number.value == fn %}
+                            selected
+                        {% elif not form.flight_number.value and schedule.flight_number == fn %}
+                            selected
+                        {% endif %}
+                    >{{ fn }}</option>
+                {% endfor %}
+            </select>
+            {% if form.flight_number.errors %}
+                <ul class="errorlist">
+                    {% for error in form.flight_number.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
 
-            <div class="form-group">
-                <label for="destination">Destination</label>
-                {{ form.destination }}
-                {% if form.destination.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.destination.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
+        <div class="form-group">
+            <label for="origin">Origin</label>
+            <input id="origin" name="origin" list="philippine-locations" 
+                   value="{{ form.origin.value|default:schedule.origin }}" placeholder="Select origin" autocomplete="off" required />
+            {% if form.origin.errors %}
+                <ul class="errorlist">
+                    {% for error in form.origin.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
 
-            <div class="form-group">
-                <label for="departure_date">Departure Date</label>
-                {{ form.departure_date }}
-                {% if form.departure_date.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.departure_date.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
+        <div class="form-group">
+            <label for="destination">Destination</label>
+            <input id="destination" name="destination" list="philippine-locations" 
+                   value="{{ form.destination.value|default:schedule.destination }}" placeholder="Select destination" autocomplete="off" required />
+            {% if form.destination.errors %}
+                <ul class="errorlist">
+                    {% for error in form.destination.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
 
-            <div class="form-group">
-                <label for="available_seats">Available Seats</label>
-                {{ form.available_seats }}
-                {% if form.available_seats.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.available_seats.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-            <div class="form-group">
+      <div class="form-group">
+    <label for="departure_date">Departure Date</label>
+ <input type="date" id="departure_date" name="departure_date"
+       value="{{ form.departure_date.value|default:schedule.departure_date|date:'Y-m-d' }}" required />
+
+    {% if form.departure_date.errors %}
+        <ul class="errorlist">
+            {% for error in form.departure_date.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+
+<div class="form-group">
     <label for="departure_time">Departure Time</label>
-    {{ form.departure_time }}
+  <input type="time" id="departure_time" name="departure_time"
+       value="{{ form.departure_time.value|default:schedule.departure_time|time:'H:i' }}" required />
+
     {% if form.departure_time.errors %}
         <ul class="errorlist">
             {% for error in form.departure_time.errors %}
@@ -136,10 +173,57 @@
     {% endif %}
 </div>
 
+        <div class="form-group">
+            <label for="available_seats">Available Seats</label>
+            <input type="number" id="available_seats" name="available_seats" min="1" 
+                   value="{{ form.available_seats.value|default:schedule.available_seats }}" required />
+            {% if form.available_seats.errors %}
+                <ul class="errorlist">
+                    {% for error in form.available_seats.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
 
+        <div class="form-group">
+            <label for="price">Price (₱)</label>
+            <input type="number" id="price" name="price" step="0.01" min="0" 
+                   value="{{ form.price.value|default:schedule.price }}" required />
+            {% if form.price.errors %}
+                <ul class="errorlist">
+                    {% for error in form.price.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'admin_dashboard' %}" class="button-link">Back</a>
             <button type="submit">Save Changes</button>
-        </form>
-    </div>
+        </div>
+    </form>
+
+    <datalist id="philippine-locations">
+      <option value="Manila (MNL)">
+      <option value="Cebu (CEB)">
+      <option value="Davao (DVO)">
+      <option value="Clark (CRK)">
+      <option value="Iloilo (ILO)">
+      <option value="Bacolod (BCD)">
+      <option value="Tacloban (TAC)">
+      <option value="Cagayan de Oro (CGY)">
+      <option value="Zamboanga (ZAM)">
+      <option value="Puerto Princesa (PPS)">
+      <option value="General Santos (GES)">
+      <option value="Kalibo (KLO)">
+      <option value="Roxas (RXS)">
+      <option value="Legazpi (DRP)">
+      <option value="Tagbilaran (TAG)">
+    </datalist>
+
+</div>
 
 </body>
 </html>

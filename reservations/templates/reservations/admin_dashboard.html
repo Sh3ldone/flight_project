@@ -6,8 +6,8 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            background-color: #fff; /* white background */
-            color: #000; /* black text */
+            background-color: #fff;
+            color: #000;
         }
 
         h1 {
@@ -23,8 +23,7 @@
             background-color: #fff;
             padding: 30px;
             border-radius: 8px;
-            border: 1px solid #000; /* black border */
-            box-shadow: none;
+            border: 1px solid #000;
         }
 
         table {
@@ -34,7 +33,7 @@
         }
 
         th, td {
-            border: 1px solid #000; /* black border */
+            border: 1px solid #000;
             padding: 12px;
             text-align: left;
             color: #000;
@@ -55,44 +54,24 @@
             display: inline-block;
         }
 
-        .btn-add {
-            background-color: #000;
-            color: #fff;
-            font-weight: 700;
-            padding: 10px 20px;
-            border-radius: 6px;
-            text-decoration: none;
-            display: inline-block;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .btn-add:hover {
-            background-color: #222;
-        }
-
-        .btn-view {
-            background-color: #000;
-            color: #fff;
-            font-weight: 700;
-            padding: 10px 20px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .btn-view:hover {
-            background-color: #222;
-        }
-
-        .btn-edit {
-            background-color: #000;
-        }
+        .btn-add,
+        .btn-view,
+        .btn-edit,
         .btn-delete {
             background-color: #000;
+            color: #fff;
+            font-weight: 700;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
-        .actions a.btn-edit:hover,
-        .actions a.btn-delete:hover {
+
+        .btn-add:hover,
+        .btn-view:hover,
+        .btn-edit:hover,
+        .btn-delete:hover {
             background-color: #222;
         }
 
@@ -130,7 +109,6 @@
             flex-wrap: wrap;
         }
 
-        /* Messages styling */
         .message {
             padding: 12px;
             border-radius: 5px;
@@ -139,15 +117,8 @@
             font-weight: 600;
         }
 
-        .message.success {
-            background-color: #000;
-        }
-
-        .message.error {
-            background-color: #000;
-            opacity: 0.8;
-        }
-
+        .message.success,
+        .message.error,
         .message.info {
             background-color: #000;
             opacity: 0.8;
@@ -156,28 +127,32 @@
 
     <script>
         function toggleFlightSchedules() {
-            var schedulesSection = document.getElementById('schedules-section');
-            schedulesSection.style.display = (schedulesSection.style.display === "block") ? "none" : "block";
+            var section = document.getElementById('schedules-section');
+            section.style.display = section.style.display === 'block' ? 'none' : 'block';
         }
 
         function toggleReservations() {
-            var reservationsSection = document.getElementById('reservations-section');
-            reservationsSection.style.display = (reservationsSection.style.display === "block") ? "none" : "block";
+            var section = document.getElementById('reservations-section');
+            section.style.display = section.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleBookingHistory() {
+            var section = document.getElementById('booking-history-section');
+            section.style.display = section.style.display === 'block' ? 'none' : 'block';
         }
     </script>
 </head>
 <body>
 
     <!-- Logout Button -->
-    <form action="{% url 'login' %}" method="post" style="margin:0;">
+    <form action="{% url 'logout' %}" method="post" style="margin:0;">
         {% csrf_token %}
         <button type="submit" class="logout-btn">Logout</button>
     </form>
 
     <div class="container">
         <h1>Welcome to the Admin Dashboard</h1>
-        
-        <!-- Success/Error Message Display -->
+
         {% if messages %}
             {% for message in messages %}
                 <div class="message {{ message.tags }}">
@@ -186,49 +161,11 @@
             {% endfor %}
         {% endif %}
 
-        <!-- Buttons for Actions -->
         <div class="btn-container">
             <a href="{% url 'add_flight_schedule' %}" class="btn-add">Add Flight Schedule</a>
             <button class="btn-view" onclick="toggleFlightSchedules()">Flight Schedules</button>
             <button class="btn-view" onclick="toggleReservations()">View Reservations</button>
-        </div>
-
-        <!-- Flight Schedules Section -->
-        <div id="schedules-section" style="display:none;">
-            {% if flight_schedules %}
-                <h2>All Flight Schedules</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Flight Number</th>
-                            <th>Origin</th>
-                            <th>Destination</th>
-                            <th>Departure Date</th>
-                            <th>Departure Time</th>
-                            <th>Available Seats</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for schedule in flight_schedules %}
-                        <tr>
-                            <td>{{ schedule.flight_number }}</td>
-                            <td>{{ schedule.origin }}</td>
-                            <td>{{ schedule.destination }}</td>
-                            <td>{{ schedule.departure_date }}</td>
-                            <td>{{ schedule.departure_time }}</td>
-                            <td>{{ schedule.available_seats }}</td>
-                            <td class="actions">
-                                <a href="{% url 'edit_schedule' schedule.id %}" class="btn btn-edit" style="background:#000; color:#fff; padding:6px 12px; border-radius:4px; text-decoration:none;">Edit</a>
-                                <a href="{% url 'delete_flight_schedule' schedule.id %}" class="btn btn-delete" style="background:#000; color:#fff; padding:6px 12px; border-radius:4px; text-decoration:none;" onclick="return confirm('Are you sure you want to delete this flight schedule?');">Delete</a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p class="no-schedules">No flight schedules found.</p>
-            {% endif %}
+            <button class="btn-view" onclick="toggleBookingHistory()">Booking History</button>
         </div>
 
         <!-- Reservations Section -->
@@ -244,40 +181,158 @@
                             <th>Destination</th>
                             <th>Departure Date</th>
                             <th>Departure Time</th>
+                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                   <tbody>
-                    {% for reservation in reservations %}
-                        <tr>
-                            <td>{{ reservation.full_name }}</td>
-                            <td>{{ reservation.email }}</td>
-                            <td>{{ reservation.flight_schedule.origin }}</td>
-                            <td>{{ reservation.flight_schedule.destination }}</td>
-                            <td>{{ reservation.flight_schedule.departure_date }}</td>
-                            <td>{{ reservation.flight_schedule.departure_time }}</td>
-                            <td class="actions">
-                                {% if request.user.is_staff or reservation.user == request.user %}
-                                    <a href="{% url 'edit_reservation' reservation.id %}" style="color:#000; text-decoration:none; font-weight:600;">Edit</a> |
-                                    <a href="{% url 'cancel_reservation' reservation.id %}" style="color:#000; text-decoration:none; font-weight:600;">Cancel</a>
-                                {% else %}
-                                    <span style="color:#777;">No actions available</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="7" style="text-align:center; color:#777;">No reservations found.</td>
-                        </tr>
-                    {% endfor %}
-                   </tbody>
+                    <tbody>
+                        {% for reservation in reservations %}
+                            <tr>
+                                <td>{{ reservation.full_name }}</td>
+                                <td>{{ reservation.email }}</td>
+                                <td>
+                                    {% if reservation.flight_schedule %}
+                                        {{ reservation.flight_schedule.origin }}
+                                    {% else %}
+                                        N/A (Schedule deleted)
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if reservation.flight_schedule %}
+                                        {{ reservation.flight_schedule.destination }}
+                                    {% else %}
+                                        N/A (Schedule deleted)
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if reservation.flight_schedule %}
+                                        {{ reservation.flight_schedule.departure_date }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if reservation.flight_schedule %}
+                                        {{ reservation.flight_schedule.departure_time }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                <td>{{ reservation.status|capfirst }}</td>
+                                <td class="actions">
+                                    {% if request.user.is_staff or reservation.user == request.user %}
+                                        {% if reservation.flight_schedule %}
+                                            <a href="{% url 'edit_reservation' reservation.id %}" style="color:#000;">Edit</a> |
+                                            <a href="{% url 'cancel_reservation' reservation.id %}" style="color:#000;">Cancel</a>
+                                        {% else %}
+                                            <span style="color:#777;">N/A</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="8" class="no-reservations">No reservations found.</td></tr>
+                        {% endfor %}
+                    </tbody>
                 </table>
             {% else %}
                 <p class="no-reservations">No reservations found.</p>
             {% endif %}
         </div>
+        <!-- Flight Schedules Section -->
+<div id="schedules-section" style="display:none;">
+    {% if flight_schedules %}
+        <h2>Flight Schedules</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Origin</th>
+                    <th>Destination</th>
+                    <th>Departure Date</th>
+                    <th>Departure Time</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for schedule in flight_schedules %}
+                    <tr>
+                        <td>{{ schedule.origin }}</td>
+                        <td>{{ schedule.destination }}</td>
+                        <td>{{ schedule.departure_date }}</td>
+                        <td>{{ schedule.departure_time }}</td>
+                        <td>
+                            <a href="{% url 'edit_flight_schedule' schedule.id %}" style="color:#000;">Edit</a> |
+                            <a href="{% url 'delete_flight_schedule' schedule.id %}" style="color:#000;">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="no-schedules">No flight schedules available.</p>
+    {% endif %}
+</div>
+
+
+        <!-- Booking History Section -->
+        <div id="booking-history-section" style="display:none;">
+            {% if past_reservations %}
+                <h2>Booking History</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Origin</th>
+                            <th>Destination</th>
+                            <th>Departure Date</th>
+                            <th>Departure Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reservation in past_reservations %}
+                            <tr>
+                                <td>{{ reservation.full_name }}</td>
+                                <td>{{ reservation.email }}</td>
+                                <td>
+                                    {% if reservation.flight_schedule %}
+                                        {{ reservation.flight_schedule.origin }}
+                                    {% else %}
+                                        N/A (Schedule deleted)
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if reservation.flight_schedule %}
+                                        {{ reservation.flight_schedule.destination }}
+                                    {% else %}
+                                        N/A (Schedule deleted)
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if reservation.flight_schedule %}
+                                        {{ reservation.flight_schedule.departure_date }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if reservation.flight_schedule %}
+                                        {{ reservation.flight_schedule.departure_time }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                <td>{{ reservation.status|capfirst }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="no-reservations">No past bookings found.</p>
+            {% endif %}
+        </div>
 
     </div>
-
 </body>
 </html>

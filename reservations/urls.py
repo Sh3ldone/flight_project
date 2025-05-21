@@ -47,7 +47,7 @@ urlpatterns = [
     path('reservations/', views.list_reservations, name='list_reservations'),
 
     path('reservations/edit/<int:reservation_id>/', views.edit_reservation, name='edit_reservation'),
-    path('reservations/cancel/<int:id>/', views.cancel_reservation, name='cancel_reservation'),
+    path('reservations/cancel/<int:reservation_id>/', views.cancel_reservation, name='cancel_reservation'),
 
     # Edit and Delete flight schedules
     path('edit-flight-schedule/<int:pk>/', views.edit_flight_schedule, name='edit_flight_schedule'),
