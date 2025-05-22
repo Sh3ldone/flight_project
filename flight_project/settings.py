@@ -14,7 +14,15 @@ SECRET_KEY = 'django-insecure-ni2wj_1skqj71n(@-=uqae1h+vq+t$fdwjuk+ji46k(pjgfc!&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['flight-project-7jh4.onrender.com', 'localhost', '127.0.0.1']
+ 
+
+ALLOWED_HOSTS = [
+    'donzflightreservation.onrender.com',
+    'localhost',
+    '127.0.0.1'
+]
+
+
 
 
 # Application definition
