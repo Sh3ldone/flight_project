@@ -298,7 +298,7 @@ def register_user(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Your account has been created. You can now log in.')
-            return redirect('login_user')  # or 'login_user' depending on your setup
+            return redirect('login_users')  # or 'login_user' depending on your setup
     else:
         form = UserRegisterForm()
 
