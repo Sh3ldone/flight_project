@@ -16,14 +16,20 @@ from .forms import SupportForm
 from django.core.mail import send_mail, EmailMultiAlternatives # Make sure this import is at the top
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from django.utils.timezone import now
 from django.http import Http404
+from django.http import HttpResponse
+from django.contrib.auth.models import User
  
  
 
  
 
-
+def create_superuser(request):
+    if User.objects.filter(is_superuser=True).exists():
+        return HttpResponse("Superuser already exists.")
+    else:
+        User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
+        return HttpResponse("Superuser created: username='admin', password='admin123'")
  
 # Admin Dashboard View
 

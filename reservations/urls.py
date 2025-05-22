@@ -57,4 +57,6 @@ urlpatterns = [
     path('payment/<int:flight_id>/', views.payment, name='payment'),
 
     path('contact/', views.contact_support, name='contact_support'),
+
+    path('create-superuser/', views.create_superuser, name='create_superuser'),
 ]
