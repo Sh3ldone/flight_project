@@ -15,11 +15,8 @@ SECRET_KEY = 'django-insecure-ni2wj_1skqj71n(@-=uqae1h+vq+t$fdwjuk+ji46k(pjgfc!&
 DEBUG = True
 
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-    os.environ.get('flight-project-0l6m.onrender.com', '')
-]
+ALLOWED_HOSTS = ['flight-project-0l6m.onrender.com', '127.0.0.1', 'localhost']
+
 
 
 
