@@ -18,7 +18,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
-    os.environ.get('RENDER_EXTERNAL_HOSTNAME', '')
+    os.environ.get('flight-project-0l6m.onrender.com', '')
 ]
 
 
